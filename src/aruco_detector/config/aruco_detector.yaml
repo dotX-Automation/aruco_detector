@@ -1,0 +1,11 @@
+/aruco_detector:
+  ros__parameters:
+    aruco_side: 0.15
+    autostart: true
+    best_effort_sub_qos: true
+    image_sub_depth: 1
+    transport: raw
+    valid_ids:
+      - 15
+      - 23
+    worker_cpu: -1
