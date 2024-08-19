@@ -1,9 +1,10 @@
 /**
- * Aruco Detector header file.
+ * Aruco Detector node definition.
  *
- * dotX Automation <info@dotxautomation.com>
+ * Lorenzo Bianchi <lnz.bnc@gmail.com>
+ * dotX Automation s.r.l. <info@dotxautomation.com>
  *
- * August 7, 2023
+ * August 19, 2024
  */
 
 /**
@@ -22,8 +23,8 @@
  * limitations under the License.
  */
 
-#ifndef ARUCO_DETECTOR_HPP
-#define ARUCO_DETECTOR_HPP
+#ifndef ARUCO_DETECTOR__ARUCO_DETECTOR_HPP
+#define ARUCO_DETECTOR__ARUCO_DETECTOR_HPP
 
 #include <algorithm>
 #include <atomic>
@@ -51,8 +52,9 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/image.hpp>
-#include <std_srvs/srv/set_bool.hpp>
 #include <vision_msgs/msg/detection2_d_array.hpp>
+
+#include <std_srvs/srv/set_bool.hpp>
 
 #include <theora_wrappers/publisher.hpp>
 
@@ -62,17 +64,17 @@ using namespace sensor_msgs::msg;
 using namespace std_srvs::srv;
 using namespace vision_msgs::msg;
 
-namespace ArucoDetector
+namespace aruco_detector
 {
 
 /**
  * ArUco marker detection node.
  */
-class ArucoDetectorNode : public dua_node::NodeBase
+class ArucoDetector : public dua_node::NodeBase
 {
 public:
-  ArucoDetectorNode(const rclcpp::NodeOptions & node_options = rclcpp::NodeOptions());
-  ~ArucoDetectorNode();
+  ArucoDetector(const rclcpp::NodeOptions & node_options = rclcpp::NodeOptions());
+  ~ArucoDetector();
 
 private:
   /* Node initialization routines */
@@ -85,8 +87,9 @@ private:
   std::shared_ptr<image_transport::CameraSubscriber> camera_sub_;
 
   /* Topic subscriptions callbacks */
-  void camera_callback(const Image::ConstSharedPtr & msg,
-                       const CameraInfo::ConstSharedPtr & camera_info_msg);
+  void camera_callback(
+    const Image::ConstSharedPtr & msg,
+    const CameraInfo::ConstSharedPtr & camera_info_msg);
 
   /* Topic publishers */
   rclcpp::Publisher<Detection2DArray>::SharedPtr detections_pub_;
@@ -111,15 +114,15 @@ private:
 
   /* Internal state variables */
   bool get_calibration_params_ = true;
-  cv::Mat cameraMatrix, distCoeffs, objPoints;
+  cv::Mat camera_matrix_, dist_coeffs_, obj_points_;
 
   /* Node parameters */
   double aruco_side_ = 0.0;
   bool autostart_ = false;
-  bool best_effort_sub_qos_ = false;
+  bool subscriber_best_effort_qos_ = false;
+  int64_t subscriber_depth_ = 0;
+  std::string subscriber_transport_ = "";
   std::vector<int64_t> valid_ids_;
-  int64_t image_sub_depth_ = 0;
-  std::string transport_ = "";
   int64_t worker_cpu_ = 0;
 
   /* Synchronization primitives for internal update operations */
@@ -130,11 +133,13 @@ private:
   std::thread worker_;
 
   /* Utility routines */
+  void activate_detector();
+  void deactivate_detector();
   void worker_thread_routine();
   Image::SharedPtr frame_to_msg(cv::Mat & frame);
   void rodr_to_quat(cv::Vec3d r, PoseWithCovariance & target_pose);
 };
 
-} // namespace ArucoDetector
+} // namespace aruco_detector
 
-#endif // ARUCO_DETECTOR_HPP
+#endif // ARUCO_DETECTOR__ARUCO_DETECTOR_HPP

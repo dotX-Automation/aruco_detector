@@ -1,6 +1,6 @@
 header_include_path: aruco_detector/aruco_detector.hpp
-namespace: ArucoDetector
-node_class_name: ArucoDetectorNode
+namespace: aruco_detector
+node_class_name: ArucoDetector
 
 params:
   aruco_side:
@@ -9,7 +9,7 @@ params:
     min_value: 0.0
     max_value: 2.0
     step: 0.0
-    description: "ArUco marker side in meters."
+    description: "ArUco marker side [m]."
     constraints: "Cannot be changed."
     read_only: true
     var_name: aruco_side_
@@ -17,20 +17,20 @@ params:
   autostart:
     type: bool
     default_value: false
-    description: "Whether to start detection immediately."
+    description: "Start detection right after node initialization."
     constraints: "Cannot be changed."
     read_only: true
     var_name: autostart_
 
-  best_effort_sub_qos:
+  subscriber_best_effort_qos:
     type: bool
-    default_value: false
-    description: "Whether to subscribe to the input topics with a best effort QoS."
+    default_value: true
+    description: "Whether to subscribe to the input topic with a best effort QoS."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: best_effort_sub_qos_
+    var_name: subscriber_best_effort_qos_
 
-  image_sub_depth:
+  subscriber_depth:
     type: integer
     default_value: 1
     min_value: 0
@@ -39,15 +39,15 @@ params:
     description: "Image subscriber queue depth."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: image_sub_depth_
+    var_name: subscriber_depth_
 
-  transport:
+  subscriber_transport:
     type: string
     default_value: raw
     description: "Transport type to use with image_transport."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: transport_
+    var_name: subscriber_transport_
 
   valid_ids:
     type: integer_array
@@ -66,7 +66,7 @@ params:
     min_value: -1
     max_value: 255
     step: 1
-    description: "CPU on which the worker will be pinned."
+    description: "CPU on which the worker thread will be pinned."
     constraints: "Cannot be changed, -1 disables this policy."
     read_only: true
     var_name: worker_cpu_

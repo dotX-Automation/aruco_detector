@@ -1,6 +1,14 @@
 # dua-template
 
-GitHub template repositories for projects based on the Distributed Unified Architecture.
+Module for ArUco marker detection and pose estimation.
+
+Based on the OpenCV library, this project provides a ROS 2 software module for detecting ArUco markers in images and estimating their pose.
+
+## DUA integration
+
+This project is integrated with the Distributed Unified Architecture (DUA).
+
+As of today, no additional dependencies are required to build and run this project, so no further modifications of DUA containers are needed.
 
 See [`dua-template.md`](dua-template.md) for more information.
 

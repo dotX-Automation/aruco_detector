@@ -1,62 +1,64 @@
 /**
  * Aruco Detector topic subscription callbacks.
  *
- * dotX Automation <info@dotxautomation.com>
+ * Lorenzo Bianchi <lnz.bnc@gmail.com>
+ * dotX Automation s.r.l. <info@dotxautomation.com>
  *
- * August 7, 2023
-*/
+ * August 19, 2024
+ */
 
 /**
- * This is free software.
- * You can redistribute it and/or modify this file under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright 2024 dotX Automation s.r.l.
  *
- * This file is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * You should have received a copy of the GNU General Public License along with
- * this file; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <aruco_detector/aruco_detector.hpp>
 
-namespace ArucoDetector
+namespace aruco_detector
 {
 
 /**
  * @brief Parses a new image message.
  *
  * @param msg Image message to parse.
+ * @param camera_info_msg Corresponding camera info message.
  */
-void ArucoDetectorNode::camera_callback(
+void ArucoDetector::camera_callback(
   const Image::ConstSharedPtr & msg,
   const CameraInfo::ConstSharedPtr & camera_info_msg)
 {
   // Get camera parameters
   if (get_calibration_params_) {
-    cameraMatrix = cv::Mat(3, 3, cv::DataType<double>::type);
-    distCoeffs = cv::Mat(1, 5, cv::DataType<double>::type);
+    camera_matrix_ = cv::Mat(3, 3, cv::DataType<double>::type);
+    dist_coeffs_ = cv::Mat(1, 5, cv::DataType<double>::type);
 
     for (size_t i = 0; i < 3; i++) {
       for (size_t j = 0; j < 3; j++) {
-        cameraMatrix.at<double>(i, j) = camera_info_msg->k[i * 3 + j];
+        camera_matrix_.at<double>(i, j) = camera_info_msg->k[i * 3 + j];
       }
     }
 
     for (size_t i = 0; i < 5; i++) {
-      distCoeffs.at<double>(0, i) = camera_info_msg->d[i];
+      dist_coeffs_.at<double>(0, i) = camera_info_msg->d[i];
     }
 
     // Set coordinate system
-    objPoints = cv::Mat(4, 1, CV_32FC3);
-    objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-aruco_side_ / 2.f, aruco_side_ / 2.f, 0);
-    objPoints.ptr<cv::Vec3f>(0)[1] = cv::Vec3f(aruco_side_ / 2.f, aruco_side_ / 2.f, 0);
-    objPoints.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(aruco_side_ / 2.f, -aruco_side_ / 2.f, 0);
-    objPoints.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-aruco_side_ / 2.f, -aruco_side_ / 2.f, 0);
+    obj_points_ = cv::Mat(4, 1, CV_32FC3);
+    obj_points_.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-aruco_side_ / 2.f, aruco_side_ / 2.f, 0);
+    obj_points_.ptr<cv::Vec3f>(0)[1] = cv::Vec3f(aruco_side_ / 2.f, aruco_side_ / 2.f, 0);
+    obj_points_.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(aruco_side_ / 2.f, -aruco_side_ / 2.f, 0);
+    obj_points_.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-aruco_side_ / 2.f, -aruco_side_ / 2.f, 0);
 
     get_calibration_params_ = false;
   }
@@ -75,4 +77,4 @@ void ArucoDetectorNode::camera_callback(
   sem_post(&sem2_);
 }
 
-} // namespace ArucoDetector
+} // namespace aruco_detector

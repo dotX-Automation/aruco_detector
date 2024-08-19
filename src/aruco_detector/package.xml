@@ -4,7 +4,7 @@
   <name>aruco_detector</name>
   <version>1.0.0</version>
   <description>ArUco marker detection module.</description>
-  <maintainer email="info@dotxautomation.com">dotX Automation</maintainer>
+  <maintainer email="info@dotxautomation.com">dotX Automation s.r.l.</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -12,7 +12,7 @@
   <depend>dua_app_management</depend>
   <depend>dua_interfaces</depend>
   <depend>dua_node</depend>
-  <depend>dua_qos</depend>
+  <depend>dua_qos_cpp</depend>
   <depend>geometry_msgs</depend>
   <depend>image_transport</depend>
   <depend>params_manager</depend>
