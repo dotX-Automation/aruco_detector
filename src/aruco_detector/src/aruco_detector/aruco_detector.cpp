@@ -130,7 +130,9 @@ void ArucoDetector::worker_thread_routine()
     detector.detectMarkers(image_, marker_corners, marker_ids);
 
     // Return if no target is detected
-    if (marker_ids.size() == 0) {continue;}
+    if (marker_ids.size() == 0) {
+      continue;
+    }
 
     std::vector<cv::Vec3d> rvecs(marker_ids.size()), tvecs(marker_ids.size());
 

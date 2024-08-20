@@ -61,7 +61,8 @@ def generate_launch_description():
         log_cmd=True,
         parameters=[cf],
         remappings=[
-            ('/image', '/camera/image_color'),
+            ('/image', '/camera/image_rect_color'),
+            ('/camera_info', '/camera/camera_info'),
             ('/detections', '/detections'),
             ('/detections_stream', '/detections_stream'),
         ]

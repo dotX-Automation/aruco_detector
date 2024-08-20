@@ -2,7 +2,7 @@
   ros__parameters:
     aruco_side: 0.15
     autostart: true
-    subscriber_best_effot_qos: true
+    subscriber_best_effort_qos: true
     subscriber_depth: 1
     subscriber_transport: raw
     valid_ids:
