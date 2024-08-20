@@ -77,62 +77,58 @@ public:
   ~ArucoDetector();
 
 private:
-  /* Node initialization routines */
+  /* Node initialization routines. */
   void init_parameters();
   void init_publishers();
   void init_services();
   void init_subscriptions();
 
-  /* image_transport subscriptions */
+  /* image_transport subscriptions. */
   std::shared_ptr<image_transport::CameraSubscriber> camera_sub_;
 
-  /* Topic subscriptions callbacks */
+  /* Topic subscriptions callbacks. */
   void camera_callback(
     const Image::ConstSharedPtr & msg,
     const CameraInfo::ConstSharedPtr & camera_info_msg);
 
-  /* Topic publishers */
+  /* Topic publishers. */
   rclcpp::Publisher<Detection2DArray>::SharedPtr detections_pub_;
 
   /* Theora stream publishers. */
   std::shared_ptr<TheoraWrappers::Publisher> stream_pub_;
 
-  /* Service servers callback groups */
+  /* Service servers callback groups. */
   rclcpp::CallbackGroup::SharedPtr enable_cgroup_;
 
-  /* Service servers */
+  /* Service servers. */
   rclcpp::Service<SetBool>::SharedPtr enable_server_;
 
-  /* Service callbacks */
+  /* Service callbacks. */
   void enable_callback(
     SetBool::Request::SharedPtr req,
     SetBool::Response::SharedPtr resp);
 
-  /* Data buffers */
+  /* Data buffers. */
   cv::Mat camera_frame_, new_frame_;
   std_msgs::msg::Header last_header_;
 
-  /* Internal state variables */
+  /* Internal state variables. */
   bool get_calibration_params_ = true;
   cv::Mat camera_matrix_, dist_coeffs_, obj_points_;
 
-  /* Node parameters */
+  /* Node parameters. */
   double aruco_side_ = 0.0;
-  bool autostart_ = false;
-  bool subscriber_best_effort_qos_ = false;
-  int64_t subscriber_depth_ = 0;
-  std::string subscriber_transport_ = "";
   std::vector<int64_t> valid_ids_;
   int64_t worker_cpu_ = 0;
 
-  /* Synchronization primitives for internal update operations */
+  /* Synchronization primitives for internal update operations. */
   std::atomic<bool> running_{false};
   sem_t sem1_, sem2_;
 
-  /* Threads */
+  /* Threads. */
   std::thread worker_;
 
-  /* Utility routines */
+  /* Utility routines. */
   void activate_detector();
   void deactivate_detector();
   void worker_thread_routine();

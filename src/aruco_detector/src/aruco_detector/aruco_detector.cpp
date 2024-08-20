@@ -62,7 +62,7 @@ ArucoDetector::~ArucoDetector()
  */
 void ArucoDetector::init_subscriptions()
 {
-  if (autostart_) {
+  if (this->get_parameter("autostart").as_bool()) {
     activate_detector();
   }
 }
@@ -74,14 +74,14 @@ void ArucoDetector::init_publishers()
 {
   // detections
   detections_pub_ = this->create_publisher<Detection2DArray>(
-    "/detections",
+    "~/detections",
     dua_qos::Reliable::get_datum_qos());
 
   // detections_stream
   stream_pub_ = std::make_shared<TheoraWrappers::Publisher>(
     this,
-    "/detections_stream",
-    dua_qos::BestEffort::get_image_qos(subscriber_depth_).get_rmw_qos_profile());
+    "~/detections_stream",
+    dua_qos::BestEffort::get_image_qos().get_rmw_qos_profile());
 }
 
 /**

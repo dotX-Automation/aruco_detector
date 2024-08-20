@@ -37,34 +37,17 @@ def generate_launch_description():
         'aruco_detector.yaml'
     )
 
-    # Declare launch arguments
-    ns = LaunchConfiguration('namespace')
-    cf = LaunchConfiguration('cf')
-    ns_launch_arg = DeclareLaunchArgument(
-        'namespace',
-        default_value=''
-    )
-    cf_launch_arg = DeclareLaunchArgument(
-        'cf',
-        default_value=config
-    )
-    ld.add_action(ns_launch_arg)
-    ld.add_action(cf_launch_arg)
-
     # Create node launch description
     node = Node(
         package='aruco_detector',
         executable='aruco_detector_app',
-        namespace=ns,
+        namespace='',
         emulate_tty=True,
         output='both',
         log_cmd=True,
-        parameters=[cf],
+        parameters=[config],
         remappings=[
-            ('/image', '/camera/image_rect_color'),
-            ('/camera_info', '/camera/camera_info'),
-            ('/detections', '/detections'),
-            ('/detections_stream', '/detections_stream'),
+            ('/aruco_detector/detections', '/aruco_detector/detections')
         ]
     )
 

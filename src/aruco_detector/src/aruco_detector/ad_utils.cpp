@@ -125,19 +125,20 @@ void ArucoDetector::activate_detector()
   }
 
   // Subscribe to image topic
+  int64_t subscriber_depth = this->get_parameter("subscriber_depth").as_int();
   camera_sub_ = std::make_shared<image_transport::CameraSubscriber>(
     image_transport::create_camera_subscription(
       this,
-      "/image",
+      this->get_parameter("subscriber_base_topic_name").as_string(),
       std::bind(
         &ArucoDetector::camera_callback,
         this,
         std::placeholders::_1,
         std::placeholders::_2),
-      subscriber_transport_,
-      subscriber_best_effort_qos_ ?
-      dua_qos::BestEffort::get_image_qos(subscriber_depth_).get_rmw_qos_profile() :
-      dua_qos::Reliable::get_image_qos(subscriber_depth_).get_rmw_qos_profile()));
+      this->get_parameter("subscriber_transport").as_string(),
+      this->get_parameter("subscriber_best_effort_qos").as_bool() ?
+      dua_qos::BestEffort::get_image_qos(subscriber_depth).get_rmw_qos_profile() :
+      dua_qos::Reliable::get_image_qos(subscriber_depth).get_rmw_qos_profile()));
 
   RCLCPP_WARN(this->get_logger(), "ArUco Detector ACTIVATED");
 }

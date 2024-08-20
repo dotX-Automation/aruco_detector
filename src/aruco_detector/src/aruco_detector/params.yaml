@@ -20,7 +20,13 @@ params:
     description: "Start detection right after node initialization."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: autostart_
+
+  subscriber_base_topic_name:
+    type: string
+    default_value: /camera/image_rect_color
+    description: "Base name of the input topics family to be passed to image_transport APIs."
+    constraints: "Cannot be changed."
+    read_only: true
 
   subscriber_best_effort_qos:
     type: bool
@@ -28,7 +34,6 @@ params:
     description: "Whether to subscribe to the input topic with a best effort QoS."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: subscriber_best_effort_qos_
 
   subscriber_depth:
     type: integer
@@ -39,7 +44,6 @@ params:
     description: "Image subscriber queue depth."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: subscriber_depth_
 
   subscriber_transport:
     type: string
@@ -47,7 +51,6 @@ params:
     description: "Transport type to use with image_transport."
     constraints: "Cannot be changed."
     read_only: true
-    var_name: subscriber_transport_
 
   valid_ids:
     type: integer_array
