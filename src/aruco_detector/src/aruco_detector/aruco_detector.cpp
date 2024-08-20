@@ -104,6 +104,12 @@ void ArucoDetector::init_services()
  */
 void ArucoDetector::worker_thread_routine()
 {
+  // Instantiate detector
+  cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(dictionary_);
+  cv::aruco::DetectorParameters detector_params = cv::aruco::DetectorParameters();
+  detector_params.cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
+  cv::aruco::ArucoDetector detector(dictionary, detector_params);
+
   while (true) {
     // Get new data
     Header header_{};
@@ -119,14 +125,6 @@ void ArucoDetector::worker_thread_routine()
     // Detect targets
     std::vector<int> marker_ids;
     std::vector<std::vector<cv::Point2f>> marker_corners;
-
-    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(
-      cv::aruco::DICT_ARUCO_ORIGINAL);
-
-    // Set detector parameters
-    cv::aruco::DetectorParameters detector_params = cv::aruco::DetectorParameters();
-    detector_params.cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
-    cv::aruco::ArucoDetector detector(dictionary, detector_params);
     detector.detectMarkers(image_, marker_corners, marker_ids);
 
     // Return if no target is detected

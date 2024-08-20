@@ -21,6 +21,14 @@ params:
     constraints: "Cannot be changed."
     read_only: true
 
+  dictionary:
+    type: string
+    default_value: DICT_ARUCO_ORIGINAL
+    description: "ArUco dictionary to use."
+    constraints: "Cannot be changed, must be the name of one of the values in the cv::aruco::PredefinedDictionaryType enum."
+    read_only: true
+    validator: validate_dictionary
+
   subscriber_base_topic_name:
     type: string
     default_value: /camera/image_rect_color

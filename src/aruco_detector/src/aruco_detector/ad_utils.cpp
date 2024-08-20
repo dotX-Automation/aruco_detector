@@ -163,4 +163,54 @@ void ArucoDetector::deactivate_detector()
   sem_destroy(&sem2_);
 }
 
+/**
+ * @brief Validates the dictionary parameter.
+ *
+ * @param p Parameter to validate.
+ * @return True if the parameter is valid, false otherwise.
+ */
+bool ArucoDetector::validate_dictionary(const rclcpp::Parameter & p)
+{
+  std::string dict_name = p.as_string();
+
+  if (dict_name == "DICT_4X4_50") {
+    dictionary_ = cv::aruco::DICT_4X4_50;
+  } else if (dict_name == "DICT_4X4_100") {
+    dictionary_ = cv::aruco::DICT_4X4_100;
+  } else if (dict_name == "DICT_4X4_250") {
+    dictionary_ = cv::aruco::DICT_4X4_250;
+  } else if (dict_name == "DICT_4X4_1000") {
+    dictionary_ = cv::aruco::DICT_4X4_1000;
+  } else if (dict_name == "DICT_5X5_50") {
+    dictionary_ = cv::aruco::DICT_5X5_50;
+  } else if (dict_name == "DICT_5X5_100") {
+    dictionary_ = cv::aruco::DICT_5X5_100;
+  } else if (dict_name == "DICT_5X5_250") {
+    dictionary_ = cv::aruco::DICT_5X5_250;
+  } else if (dict_name == "DICT_5X5_1000") {
+    dictionary_ = cv::aruco::DICT_5X5_1000;
+  } else if (dict_name == "DICT_6X6_50") {
+    dictionary_ = cv::aruco::DICT_6X6_50;
+  } else if (dict_name == "DICT_6X6_100") {
+    dictionary_ = cv::aruco::DICT_6X6_100;
+  } else if (dict_name == "DICT_6X6_250") {
+    dictionary_ = cv::aruco::DICT_6X6_250;
+  } else if (dict_name == "DICT_6X6_1000") {
+    dictionary_ = cv::aruco::DICT_6X6_1000;
+  } else if (dict_name == "DICT_7X7_50") {
+    dictionary_ = cv::aruco::DICT_7X7_50;
+  } else if (dict_name == "DICT_7X7_100") {
+    dictionary_ = cv::aruco::DICT_7X7_100;
+  } else if (dict_name == "DICT_7X7_250") {
+    dictionary_ = cv::aruco::DICT_7X7_250;
+  } else if (dict_name == "DICT_7X7_1000") {
+    dictionary_ = cv::aruco::DICT_7X7_1000;
+  } else if (dict_name == "DICT_ARUCO_ORIGINAL") {
+    dictionary_ = cv::aruco::DICT_ARUCO_ORIGINAL;
+  } else {
+    return false;
+  }
+  return true;
+}
+
 } // namespace aruco_detector

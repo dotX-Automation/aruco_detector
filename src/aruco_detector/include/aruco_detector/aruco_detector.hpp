@@ -121,6 +121,7 @@ private:
 
   /* Node parameters. */
   double aruco_side_ = 0.0;
+  cv::aruco::PredefinedDictionaryType dictionary_ = cv::aruco::DICT_ARUCO_ORIGINAL;
   std::vector<int64_t> valid_ids_;
   int64_t worker_cpu_ = 0;
 
@@ -137,6 +138,7 @@ private:
   void worker_thread_routine();
   Image::SharedPtr frame_to_msg(cv::Mat & frame);
   void rodr_to_quat(cv::Vec3d r, PoseWithCovariance & target_pose);
+  bool validate_dictionary(const rclcpp::Parameter & p);
 };
 
 } // namespace aruco_detector

@@ -2,6 +2,7 @@
   ros__parameters:
     aruco_side: 0.15
     autostart: true
+    dictionary: DICT_ARUCO_ORIGINAL
     subscriber_base_topic_name: /camera/image_rect_color
     subscriber_best_effort_qos: true
     subscriber_depth: 1
