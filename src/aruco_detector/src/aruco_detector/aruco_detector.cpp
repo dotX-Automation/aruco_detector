@@ -106,7 +106,7 @@ void ArucoDetector::worker_thread_routine()
 {
   while (true) {
     // Get new data
-    std_msgs::msg::Header header_{};
+    Header header_{};
     cv::Mat image_{};
     sem_wait(&sem2_);
     if (!running_.load(std::memory_order_acquire)) {
@@ -153,17 +153,44 @@ void ArucoDetector::worker_thread_routine()
       cv::solvePnP(
         obj_points_, marker_corners[k], camera_matrix_, dist_coeffs_, rvecs[k], tvecs[k]);
 
+      // Compute marker center position
+      cv::Point2f center(0.0f, 0.0f);
+      for (const auto & corner : marker_corners[k]) {
+        center += corner;
+      }
+      center *= 0.25f;
+
+      // Compute marker orientation in the image plane
+      cv::Point2f top_left = marker_corners[k][0];
+      cv::Point2f top_right = marker_corners[k][1];
+      cv::Point2f direction = top_right - top_left;
+      double theta = double(cv::fastAtan2(-direction.y, direction.x)) * CV_PI / 180.0;
+
+      // Compute marker size in pixels (making the assumption that it is perfectly square)
+      double size = cv::norm(direction);
+
       // Prepare messages to be published
       // Detection message
-      Detection2D detection_msg;
-      detection_msg.set__id(std::to_string(marker_ids[k]));
+      Detection2D detection_msg{};
+      detection_msg.set__header(header_);
 
+      // Object hypothesis with pose
       ObjectHypothesisWithPose result{};
-      result.hypothesis.set__class_id(std::to_string(marker_ids[k]));
+      result.hypothesis.set__class_id("ArUco " + std::to_string(marker_ids[k]));
+      result.hypothesis.set__score(1.0);
       result.pose.pose.position.set__x(tvecs[k][0]);
       result.pose.pose.position.set__y(tvecs[k][1]);
       result.pose.pose.position.set__z(tvecs[k][2]);
       rodr_to_quat(rvecs[k], result.pose);
+
+      // Bounding box
+      BoundingBox2D bbox{};
+      bbox.center.position.set__x(center.x);
+      bbox.center.position.set__y(center.y);
+      bbox.center.set__theta(theta);
+      bbox.set__size_x(size);
+      bbox.set__size_y(size);
+      detection_msg.set__bbox(bbox);
 
       detection_msg.results.push_back(result);
 

@@ -52,6 +52,7 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <std_msgs/msg/header.hpp>
 #include <vision_msgs/msg/detection2_d_array.hpp>
 
 #include <std_srvs/srv/set_bool.hpp>
@@ -61,8 +62,10 @@
 using namespace geometry_msgs::msg;
 using namespace rcl_interfaces::msg;
 using namespace sensor_msgs::msg;
-using namespace std_srvs::srv;
+using namespace std_msgs::msg;
 using namespace vision_msgs::msg;
+
+using namespace std_srvs::srv;
 
 namespace aruco_detector
 {
@@ -110,7 +113,7 @@ private:
 
   /* Data buffers. */
   cv::Mat camera_frame_, new_frame_;
-  std_msgs::msg::Header last_header_;
+  Header last_header_;
 
   /* Internal state variables. */
   bool get_calibration_params_ = true;
