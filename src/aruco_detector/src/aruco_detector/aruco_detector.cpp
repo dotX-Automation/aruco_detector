@@ -127,7 +127,7 @@ void ArucoDetector::worker_thread_routine()
     std::vector<std::vector<cv::Point2f>> marker_corners;
     detector.detectMarkers(image_, marker_corners, marker_ids);
 
-    // Return if no target is detected
+    // Drop sample if no target is detected
     if (marker_ids.size() == 0) {
       continue;
     }

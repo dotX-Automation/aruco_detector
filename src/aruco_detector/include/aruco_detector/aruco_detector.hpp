@@ -115,7 +115,7 @@ private:
   Header last_header_;
 
   /* Internal state variables. */
-  bool get_calibration_params_ = true;
+  bool got_camera_info_ = false;
   cv::Mat camera_matrix_, dist_coeffs_, obj_points_;
 
   /* Node parameters. */

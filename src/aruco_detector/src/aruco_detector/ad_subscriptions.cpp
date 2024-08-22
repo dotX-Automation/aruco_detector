@@ -39,7 +39,7 @@ void ArucoDetector::camera_callback(
   const CameraInfo::ConstSharedPtr & camera_info_msg)
 {
   // Get camera parameters
-  if (get_calibration_params_) {
+  if (!got_camera_info_) {
     camera_matrix_ = cv::Mat(3, 3, cv::DataType<double>::type);
     dist_coeffs_ = cv::Mat(1, 5, cv::DataType<double>::type);
 
@@ -60,7 +60,7 @@ void ArucoDetector::camera_callback(
     obj_points_.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(aruco_side_ / 2.f, -aruco_side_ / 2.f, 0);
     obj_points_.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-aruco_side_ / 2.f, -aruco_side_ / 2.f, 0);
 
-    get_calibration_params_ = false;
+    got_camera_info_ = true;
   }
 
   // Convert msg to OpenCV image

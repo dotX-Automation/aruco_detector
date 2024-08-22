@@ -121,7 +121,8 @@ void ArucoDetector::activate_detector()
     }
   }
 
-  // Subscribe to image topic
+  // Subscribe to camera topics
+  got_camera_info_ = false;
   int64_t subscriber_depth = this->get_parameter("subscriber_depth").as_int();
   camera_sub_ = std::make_shared<image_transport::CameraSubscriber>(
     image_transport::create_camera_subscription(
