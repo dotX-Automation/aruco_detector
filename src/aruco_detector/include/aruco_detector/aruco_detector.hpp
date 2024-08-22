@@ -46,7 +46,6 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <image_transport/image_transport.hpp>
-#include <image_transport/subscriber.hpp>
 
 #include <geometry_msgs/msg/pose.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
