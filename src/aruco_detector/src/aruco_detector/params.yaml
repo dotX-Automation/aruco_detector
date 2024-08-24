@@ -3,6 +3,14 @@ namespace: aruco_detector
 node_class_name: ArucoDetector
 
 params:
+  always_publish_stream:
+    type: bool
+    default_value: false
+    description: "Whether to always publish video feed even without detections."
+    constraints: ""
+    read_only: false
+    var_name: always_publish_stream_
+
   aruco_side:
     type: double
     default_value: 0.1

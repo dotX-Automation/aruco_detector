@@ -89,6 +89,21 @@ void ArucoDetector::rodr_to_quat(cv::Vec3d r, PoseWithCovariance & target_pose)
 }
 
 /**
+ * @brief Publishes frame.
+ *
+ * @param frame cv::Mat to be published.
+ */
+void ArucoDetector::publish_frame(cv::Mat & frame)
+{
+  // Create processed image message
+  Image::SharedPtr processed_image_msg = frame_to_msg(frame);
+  processed_image_msg->set__header(last_header_);
+
+  // Publish processed image
+  stream_pub_->publish(processed_image_msg);
+}
+
+/**
  * @brief Activates the detector.
  *
  * @throws std::runtime_error if the worker thread cannot be configured.

@@ -129,23 +129,27 @@ void ArucoDetector::worker_thread_routine()
 
     // Drop sample if no target is detected
     if (marker_ids.size() == 0) {
+      if (always_publish_stream_) {
+        publish_frame(image_);
+      }
       continue;
     }
 
     std::vector<cv::Vec3d> rvecs(marker_ids.size()), tvecs(marker_ids.size());
 
-    int n_valid_arucos = 0;
-
     // Publish information about detected targets
     Detection2DArray detections_msg;
     detections_msg.set__header(header_);
-    for (int k = 0; k < int(marker_ids.size()); k++) {
+    size_t k = 0;
+    while (k < marker_ids.size()) {
       // Continue if target is not valid
       if (std::find(valid_ids_.begin(), valid_ids_.end(), marker_ids[k]) == valid_ids_.end()) {
+        marker_corners.erase(marker_corners.begin() + k);
+        marker_ids.erase(marker_ids.begin() + k);
+        rvecs.erase(rvecs.begin() + k);
+        tvecs.erase(tvecs.begin() + k);
         continue;
       }
-
-      n_valid_arucos++;
 
       // Calculate pose for each valid marker
       cv::solvePnP(
@@ -193,27 +197,24 @@ void ArucoDetector::worker_thread_routine()
       detection_msg.results.push_back(result);
 
       detections_msg.detections.push_back(detection_msg);
-    }
-
-    if (n_valid_arucos > 0) {
-      detections_pub_->publish(detections_msg);
-
-      // Draw search output in another image
-      cv::aruco::drawDetectedMarkers(image_, marker_corners, marker_ids);
 
       // Draw axis for each marker
-      for (int i = 0; i < int(marker_ids.size()); i++) {
-        cv::drawFrameAxes(image_, camera_matrix_, dist_coeffs_, rvecs[i], tvecs[i], 0.1);
-      }
+      cv::drawFrameAxes(image_, camera_matrix_, dist_coeffs_, rvecs[k], tvecs[k], 0.1);
 
-      camera_frame_ = image_; // Doesn't copy image data, but sets data type...
+      k++;
+    }
+    // Draw search output
+    cv::aruco::drawDetectedMarkers(image_, marker_corners, marker_ids);
 
-      // Create processed image message
-      Image::SharedPtr processed_image_msg = frame_to_msg(camera_frame_);
-      processed_image_msg->set__header(header_);
+    if (detections_msg.detections.size() > 0) {
+      detections_pub_->publish(detections_msg);
 
-      // Publish processed image
-      stream_pub_->publish(processed_image_msg);
+      publish_frame(image_);
+      continue;
+    }
+
+    if (always_publish_stream_) {
+      publish_frame(image_);
     }
   }
 

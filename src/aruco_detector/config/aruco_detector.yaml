@@ -1,5 +1,6 @@
 /aruco_detector:
   ros__parameters:
+    always_publish_stream: false
     aruco_side: 0.15
     autostart: true
     dictionary: DICT_ARUCO_ORIGINAL

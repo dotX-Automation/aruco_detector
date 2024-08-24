@@ -111,7 +111,7 @@ private:
     SetBool::Response::SharedPtr resp);
 
   /* Data buffers. */
-  cv::Mat camera_frame_, new_frame_;
+  cv::Mat new_frame_;
   Header last_header_;
 
   /* Internal state variables. */
@@ -119,6 +119,7 @@ private:
   cv::Mat camera_matrix_, dist_coeffs_, obj_points_;
 
   /* Node parameters. */
+  bool always_publish_stream_ = false;
   double aruco_side_ = 0.0;
   cv::aruco::PredefinedDictionaryType dictionary_ = cv::aruco::DICT_ARUCO_ORIGINAL;
   std::vector<int64_t> valid_ids_;
@@ -134,10 +135,11 @@ private:
   /* Utility routines. */
   void activate_detector();
   void deactivate_detector();
-  void worker_thread_routine();
   Image::SharedPtr frame_to_msg(cv::Mat & frame);
+  void publish_frame(cv::Mat & frame);
   void rodr_to_quat(cv::Vec3d r, PoseWithCovariance & target_pose);
   bool validate_dictionary(const rclcpp::Parameter & p);
+  void worker_thread_routine();
 };
 
 } // namespace aruco_detector
