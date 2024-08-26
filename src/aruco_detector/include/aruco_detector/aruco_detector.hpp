@@ -66,6 +66,9 @@ using namespace vision_msgs::msg;
 
 using namespace std_srvs::srv;
 
+#define UNUSED(arg) (void)(arg)
+#define LINE std::cout << __FUNCTION__ << ", LINE: " << __LINE__ << std::endl;
+
 namespace aruco_detector
 {
 
