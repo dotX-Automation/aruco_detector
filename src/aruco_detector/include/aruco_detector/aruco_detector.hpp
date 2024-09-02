@@ -47,6 +47,7 @@
 
 #include <image_transport/image_transport.hpp>
 
+#include <dua_interfaces/msg/visual_targets.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/image_encodings.hpp>
@@ -58,6 +59,7 @@
 
 #include <theora_wrappers/publisher.hpp>
 
+using namespace dua_interfaces::msg;
 using namespace geometry_msgs::msg;
 using namespace rcl_interfaces::msg;
 using namespace sensor_msgs::msg;
@@ -98,6 +100,7 @@ private:
 
   /* Topic publishers. */
   rclcpp::Publisher<Detection2DArray>::SharedPtr detections_pub_;
+  rclcpp::Publisher<VisualTargets>::SharedPtr visual_targets_pub_;
 
   /* Theora stream publishers. */
   std::shared_ptr<TheoraWrappers::Publisher> stream_pub_;
@@ -139,7 +142,7 @@ private:
   void activate_detector();
   void deactivate_detector();
   Image::SharedPtr frame_to_msg(cv::Mat & frame);
-  void publish_frame(cv::Mat & frame);
+  void publish_frame(cv::Mat & frame, Header & header);
   void rodr_to_quat(cv::Vec3d r, PoseWithCovariance & target_pose);
   bool validate_dictionary(const rclcpp::Parameter & p);
   void worker_thread_routine();

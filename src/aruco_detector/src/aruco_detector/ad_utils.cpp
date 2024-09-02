@@ -92,12 +92,13 @@ void ArucoDetector::rodr_to_quat(cv::Vec3d r, PoseWithCovariance & target_pose)
  * @brief Publishes frame.
  *
  * @param frame cv::Mat to be published.
+ * @param header Header to be used in the message.
  */
-void ArucoDetector::publish_frame(cv::Mat & frame)
+void ArucoDetector::publish_frame(cv::Mat & frame, Header & header)
 {
   // Create processed image message
   Image::SharedPtr processed_image_msg = frame_to_msg(frame);
-  processed_image_msg->set__header(last_header_);
+  processed_image_msg->set__header(header);
 
   // Publish processed image
   stream_pub_->publish(processed_image_msg);

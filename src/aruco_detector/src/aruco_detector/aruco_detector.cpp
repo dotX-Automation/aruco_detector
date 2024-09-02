@@ -77,6 +77,11 @@ void ArucoDetector::init_publishers()
     "~/detections",
     dua_qos::Reliable::get_datum_qos());
 
+  // visual_targets
+  visual_targets_pub_ = this->create_publisher<VisualTargets>(
+    "~/visual_targets",
+    dua_qos::Reliable::get_datum_qos());
+
   // detections_stream
   stream_pub_ = std::make_shared<TheoraWrappers::Publisher>(
     this,
@@ -112,25 +117,25 @@ void ArucoDetector::worker_thread_routine()
 
   while (true) {
     // Get new data
-    Header header_{};
-    cv::Mat image_{};
+    Header header{};
+    cv::Mat image{};
     sem_wait(&sem2_);
     if (!running_.load(std::memory_order_acquire)) {
       break;
     }
-    image_ = new_frame_.clone();
-    header_ = last_header_;
+    image = new_frame_.clone();
+    header = last_header_;
     sem_post(&sem1_);
 
     // Detect targets
     std::vector<int> marker_ids;
     std::vector<std::vector<cv::Point2f>> marker_corners;
-    detector.detectMarkers(image_, marker_corners, marker_ids);
+    detector.detectMarkers(image, marker_corners, marker_ids);
 
     // Drop sample if no target is detected
     if (marker_ids.size() == 0) {
       if (always_publish_stream_) {
-        publish_frame(image_);
+        publish_frame(image, header);
       }
       continue;
     }
@@ -139,7 +144,7 @@ void ArucoDetector::worker_thread_routine()
 
     // Publish information about detected targets
     Detection2DArray detections_msg;
-    detections_msg.set__header(header_);
+    detections_msg.set__header(header);
     size_t k = 0;
     while (k < marker_ids.size()) {
       // Continue if target is not valid
@@ -174,7 +179,7 @@ void ArucoDetector::worker_thread_routine()
       // Prepare messages to be published
       // Detection message
       Detection2D detection_msg{};
-      detection_msg.set__header(header_);
+      detection_msg.set__header(header);
 
       // Object hypothesis with pose
       ObjectHypothesisWithPose result{};
@@ -199,22 +204,30 @@ void ArucoDetector::worker_thread_routine()
       detections_msg.detections.push_back(detection_msg);
 
       // Draw axis for each marker
-      cv::drawFrameAxes(image_, camera_matrix_, dist_coeffs_, rvecs[k], tvecs[k], 0.1);
+      cv::drawFrameAxes(image, camera_matrix_, dist_coeffs_, rvecs[k], tvecs[k], 0.1);
 
       k++;
     }
     // Draw search output
-    cv::aruco::drawDetectedMarkers(image_, marker_corners, marker_ids);
+    cv::aruco::drawDetectedMarkers(image, marker_corners, marker_ids);
 
     if (detections_msg.detections.size() > 0) {
       detections_pub_->publish(detections_msg);
 
-      publish_frame(image_);
+      Image::SharedPtr targets_image_msg = frame_to_msg(image);
+      targets_image_msg->set__header(header);
+
+      VisualTargets visual_targets_msg{};
+      visual_targets_msg.set__targets(detections_msg);
+      visual_targets_msg.set__image(*targets_image_msg);
+      visual_targets_pub_->publish(visual_targets_msg);
+
+      publish_frame(image, header);
       continue;
     }
 
     if (always_publish_stream_) {
-      publish_frame(image_);
+      publish_frame(image, header);
     }
   }
 
