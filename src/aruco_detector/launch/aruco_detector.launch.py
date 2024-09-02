@@ -47,7 +47,8 @@ def generate_launch_description():
         log_cmd=True,
         parameters=[config],
         remappings=[
-            ('/aruco_detector/detections', '/aruco_detector/detections')
+            ('/aruco_detector/detections', '/aruco_detector/detections'),
+            ('/aruco_detector/visual_targets', '/aruco_detector/visual_targets')
         ]
     )
 
