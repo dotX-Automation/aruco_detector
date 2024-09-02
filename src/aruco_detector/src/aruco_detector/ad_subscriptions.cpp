@@ -43,9 +43,20 @@ void ArucoDetector::camera_callback(
     camera_matrix_ = cv::Mat(3, 3, cv::DataType<double>::type);
     dist_coeffs_ = cv::Mat(1, 5, cv::DataType<double>::type);
 
-    for (size_t i = 0; i < 3; i++) {
-      for (size_t j = 0; j < 3; j++) {
-        camera_matrix_.at<double>(i, j) = camera_info_msg->k[i * 3 + j];
+    bool is_rectified =
+      this->get_parameter("subscriber_base_topic_name").as_string().find("rect") !=
+      std::string::npos;
+    if (!is_rectified) {
+      for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
+          camera_matrix_.at<double>(i, j) = camera_info_msg->k[i * 3 + j];
+        }
+      }
+    } else {
+      for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
+          camera_matrix_.at<double>(i, j) = camera_info_msg->p[i * 4 + j];
+        }
       }
     }
 
