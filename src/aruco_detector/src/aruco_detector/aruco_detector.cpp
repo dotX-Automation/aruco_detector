@@ -86,7 +86,7 @@ void ArucoDetector::init_publishers()
   stream_pub_ = std::make_shared<TheoraWrappers::Publisher>(
     this,
     "~/detections_stream",
-    dua_qos::BestEffort::get_image_qos().get_rmw_qos_profile());
+    dua_qos::Reliable::get_image_qos().get_rmw_qos_profile());
 }
 
 /**
